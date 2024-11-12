@@ -18,13 +18,11 @@ class AuthService implements AuthServiceInterface
 {
     private UserRepositoryInterface $userRepository;
     private PasswordHasherInterface $passwordHasher;
-    private $userAuth;
 
     public function __construct(UserRepositoryInterface $userRepository,  PasswordHasherInterface $passwordHasher)
     {
         $this->userRepository = $userRepository;
         $this->passwordHasher = $passwordHasher;
-        $this->userAuth = JWTAuth::parseToken()->authenticate();
     }
 
     public function login(array $credentials): AuthEntity
@@ -46,7 +44,7 @@ class AuthService implements AuthServiceInterface
 
     public function me(): ?UserEntity
     {
-        $authUser = $this->userAuth;
+        $authUser = auth("api")->user();
         if ($authUser  instanceof User) {
             return UserMapping::mapToEntity($authUser);
         }
@@ -67,7 +65,7 @@ class AuthService implements AuthServiceInterface
     }
     protected function respondWithToken($token): AuthEntity
     {
-        $authenticatedUser = $this->userAuth;
+        $authenticatedUser = auth("api")->user();
         $userDTO = UserTransformer::toDTO(new UserEntity(
             $authenticatedUser->id,
             $authenticatedUser->first_name,
@@ -78,7 +76,7 @@ class AuthService implements AuthServiceInterface
         ));
         // Crear instancia de AuthEntity
         $tokenData = [
-            'access_token' => $token,
+            'access_token' => trim($token),
             'token_type' => 'bearer',
             'expires_in' => JWTAuth::factory()->getTTL() * 60,
             'user' => $userDTO

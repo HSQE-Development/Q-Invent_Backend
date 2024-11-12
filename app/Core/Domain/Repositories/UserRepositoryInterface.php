@@ -73,9 +73,9 @@ interface UserRepositoryInterface
 
     /**
      * Cambiar password
-     * @param string $uuid
+     * @param int $id
      * @param string $password
      * @return void
      */
-    public function changePassword(string $uuid, string $password): ?UserEntity;
+    public function changePassword(int $id, string $password): ?UserEntity;
 }

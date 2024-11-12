@@ -27,14 +27,6 @@ class EloquentUserRepository implements UserRepositoryInterface
             return UserMapping::mapToEntity($eloquentUser);
         })->toArray();
     }
-
-    public function getByUuid($uuid): ?UserEntity
-    {
-
-        $query =  User::with("roles")->where("uuid", $uuid);
-        $eloquentUser = $query->first();
-        return $eloquentUser ? UserMapping::mapToEntity($eloquentUser) : null;
-    }
     public function getById($id): ?UserEntity
     {
 
@@ -105,10 +97,10 @@ class EloquentUserRepository implements UserRepositoryInterface
         return User::destroy($id);
     }
 
-    public function changePassword($uuid, $password): ?UserEntity
+    public function changePassword($id, $password): ?UserEntity
     {
         $user = null;
-        $user = $this->getByUuid($uuid);
+        $user = $this->getById($id);
         if ($user) {
             $hashed_password = $this->passwordHasher->hash($password);
             $user = $this->updateEspecificColumn($user->getId(), ["password" => $hashed_password]);
