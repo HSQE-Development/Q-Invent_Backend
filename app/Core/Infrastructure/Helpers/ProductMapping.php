@@ -22,6 +22,7 @@ class ProductMapping
             total_quantity: $product->total_quantity,
             ubication: $product->ubication,
             observation: $product->observation,
+            active: $product->active
         );
     }
 }

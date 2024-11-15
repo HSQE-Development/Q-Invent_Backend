@@ -11,21 +11,21 @@ class PaginationMapping
     /**
      * Mapea los productos paginados a la entidad de paginación.
      *
-     * @param array $mappedProducts
+     * @param array $mappedData
      * @param LengthAwarePaginator $productPaginator
      * @return PaginationEntity
      */
-    public static function mapToEntity(array $mappedProducts, LengthAwarePaginator $productPaginator): PaginationEntity
+    public static function mapToEntity(array $mappedData, LengthAwarePaginator $paginatorProps): PaginationEntity
     {
         return new PaginationEntity(
-            $mappedProducts,
-            $productPaginator->total(),
-            $productPaginator->count(),
-            $productPaginator->perPage(),
-            $productPaginator->currentPage(),
-            $productPaginator->lastPage(),
-            $productPaginator->nextPageUrl(),
-            $productPaginator->previousPageUrl()
+            $mappedData,
+            $paginatorProps->total(),
+            $paginatorProps->count(),
+            $paginatorProps->perPage(),
+            $paginatorProps->currentPage(),
+            $paginatorProps->lastPage(),
+            $paginatorProps->nextPageUrl(),
+            $paginatorProps->previousPageUrl()
         );
     }
 }

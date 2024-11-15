@@ -18,9 +18,11 @@ class UpdateProduct
     public function execute(
         int $id,
         ?string $name,
-        ?string $total_quantity,
+        ?int $total_quantity,
+        ?string $quantity_type,
         ?string $ubication,
         ?string $observation,
+        ?string $active,
     ) {
         $existingProduct = $this->productRepositoryInterface->getById($id);
 
@@ -32,8 +34,10 @@ class UpdateProduct
             id: $existingProduct->getId(),
             name: $name ?? $existingProduct->getName(),
             total_quantity: $total_quantity ?? $existingProduct->getTotal_quantity(),
+            quantity_type: $quantity_type ?? $existingProduct->getQuantityType(),
             ubication: $ubication ?? $existingProduct->getUbication(),
             observation: $observation  ?? $existingProduct->getObservation(),
+            active: $active  ?? $existingProduct->isActive(),
         );
 
         $userUpdated = $this->productRepositoryInterface->update($productEntity, $id);

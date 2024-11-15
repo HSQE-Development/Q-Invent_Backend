@@ -17,17 +17,20 @@ class CreateProduct
 
     public function execute(
         string $name,
-        string $total_quantity,
+        int $total_quantity,
+        string $quantity_type,
         string $ubication,
-        string $observation
+        string $observation,
+        string $active = "A"
     ) {
         $customer = new ProductEntity(
             null,
             $name,
             $total_quantity,
+            $quantity_type,
             $ubication,
-            $observation
-
+            $observation,
+            $active
         );
         $this->productRepositoryInterface->store($customer);
         return ProductTransformer::toDTO($customer);
