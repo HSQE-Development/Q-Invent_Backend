@@ -2,7 +2,7 @@
 
 namespace App\DTO;
 
-use App\Core\Domain\Entities\AssignmenPeopleEntity;
+use App\Core\Domain\Entities\AssignmentPeopleEntity;
 use App\Core\Domain\Entities\ProductEntity;
 
 class AssignmentPeopleDTO
@@ -11,7 +11,7 @@ class AssignmentPeopleDTO
     public string $name;
     public string $email;
     public string $phone;
-    public function __construct(AssignmenPeopleEntity $entity)
+    public function __construct(AssignmentPeopleEntity $entity)
     {
         $this->id = $entity->getId();
         $this->name = $entity->getName();

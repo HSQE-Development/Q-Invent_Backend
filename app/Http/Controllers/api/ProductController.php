@@ -129,8 +129,9 @@ class ProductController extends BaseController
                 'email' => 'string',
                 'phone' => 'string|max:255',
                 'assigned_quantity' => 'int',
+                'people_id' => 'int'
             ]);
-
+            
 
 
             return $this->sendResponse(["product" => null], message: "Producto asignado correctamente.", code: 200);

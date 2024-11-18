@@ -2,7 +2,7 @@
 
 namespace App\Core\Domain\Entities;
 
-class AssignmenPeopleEntity
+class AssignmentPeopleEntity
 {
     private ?int $id;
     private string $name;

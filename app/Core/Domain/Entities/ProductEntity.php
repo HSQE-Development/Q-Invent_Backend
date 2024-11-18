@@ -16,7 +16,7 @@ class ProductEntity
     private string $ubication;
     private ?string $observation;
     private ProductStatus $active;
-    private array $assignments;
+    private array $assignmentPeople;
 
     public function __construct(
         ?int $id,
@@ -26,7 +26,7 @@ class ProductEntity
         string $ubication,
         ?string $observation,
         string $active,
-        array $assignments = []
+        array $assignmentPeople = []
     ) {
         $this->id = $id;
         $this->name = $name;
@@ -35,7 +35,7 @@ class ProductEntity
         $this->ubication = $ubication;
         $this->observation = $observation;
         $this->active = ProductStatus::tryFrom($active);
-        $this->assignments = $assignments;
+        $this->assignmentPeople = $assignmentPeople;
     }
 
     public function getId()
@@ -85,9 +85,9 @@ class ProductEntity
         return $this->active->value;
     }
 
-    public function getAssignments()
+    public function getAssignmentPeople()
     {
-        return $this->assignments;
+        return $this->assignmentPeople;
     }
 
     /**

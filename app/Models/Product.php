@@ -19,6 +19,7 @@ class Product extends Model
     protected $fillable = [
         'name',
         'total_quantity',
+        'quantity_type',
         'ubication',
         'observation',
         'active'
@@ -27,21 +28,10 @@ class Product extends Model
 
 
 
-    public function assignments()
+    public function assignmentPeople()
     {
-        return $this->belongsToMany(AssignPeople::class, "product_assignments")
+        return $this->belongsToMany(AssignmentPeople::class, "product_assignment_people", "product_id", "assignment_person_id")
             ->withPivot("assigned_quantity")
             ->withTimestamps();
-    }
-    public function getQuantityNumberAttribute()
-    {
-        preg_match('/\d+/', $this->total_quantity, $matches);
-        return (int) $matches[0] ?? 0;
-    }
-
-    public function getAvailableQuantityAttribute()
-    {
-        $totalAssigned = $this->assignments()->sum('assigned_quantity');
-        return $this->quantity_number - $totalAssigned;
     }
 }

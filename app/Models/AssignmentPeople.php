@@ -6,8 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class AssignPeople extends Model
+class AssignmentPeople extends Model
 {
+    //
     use HasFactory, SoftDeletes;
 
     /**
@@ -17,13 +18,13 @@ class AssignPeople extends Model
      */
     protected $fillable = [
         'name',
-        'email',
         'phone',
+        'email',
     ];
 
     public function products()
     {
-        return $this->belongsToMany(Product::class, "product_assignments")
+        return $this->belongsToMany(Product::class, 'product_assignment_people', 'assignment_person_id', 'product_id')
             ->withPivot('assigned_quantity')
             ->withTimestamps();
     }

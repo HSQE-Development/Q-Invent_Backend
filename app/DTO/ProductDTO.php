@@ -13,6 +13,7 @@ class ProductDTO
     public string $ubication;
     public ?string $observation;
     public string $active;
+    public array $assignmentPeople;
 
     public function __construct(ProductEntity $entity)
     {
@@ -23,5 +24,6 @@ class ProductDTO
         $this->ubication = $entity->getUbication();
         $this->observation = $entity->getObservation();
         $this->active = $entity->isActive();
+        $this->assignmentPeople = $entity->getAssignmentPeople();
     }
 }

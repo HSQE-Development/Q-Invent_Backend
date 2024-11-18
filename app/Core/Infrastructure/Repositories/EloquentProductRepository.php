@@ -18,25 +18,8 @@ class EloquentProductRepository implements ProductRepositoryInterface
 
         $query = Product::query();
 
-        $eloquentProducts = $query->paginate($perPage, ["*"], "page", $page);
+        $eloquentProducts = $query->with("assignmentPeople")->paginate($perPage, ["*"], "page", $page);
         $mappedProducts = $eloquentProducts->items(); // Devuelve la colección de productos de la página actual
-
-        $mappedProducts = collect($mappedProducts)->map(function ($product) {
-            // Agrupamos los assignments por email
-            $groupedAssignments = $product->assignments->groupBy('email');
-
-            $groupedAssignments = $groupedAssignments->map(function ($assignments) {
-                $totalAssignedQuantity = $assignments->sum('assigned_quantity');
-                return [
-                    'assignments' => $assignments,  // Las asignaciones para este email
-                    'total_assigned_quantity' => $totalAssignedQuantity, // El total de assigned_quantity
-                ];
-            });
-            // Asignamos las asignaciones agrupadas al producto
-            $product->grouped_assignments = $groupedAssignments;
-
-            return $product;
-        });
 
         $mappedProducts = collect($mappedProducts)->map(function ($eloquentProduct) {
             return ProductMapping::mapToEntity($eloquentProduct);
@@ -65,6 +48,7 @@ class EloquentProductRepository implements ProductRepositoryInterface
         $eloquentProduct = new Product();
         $eloquentProduct->name = $product->getName();
         $eloquentProduct->total_quantity = $product->getTotal_quantity();
+        $eloquentProduct->quantity_type = $product->getQuantityType();
         $eloquentProduct->ubication = $product->getUbication();
         $eloquentProduct->observation = $product->getObservation();
         $eloquentProduct->active = $product->isActive();
