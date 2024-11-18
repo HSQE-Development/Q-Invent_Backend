@@ -20,9 +20,10 @@ class Product extends Model
         'name',
         'total_quantity',
         'quantity_type',
+        'quantity_available',
         'ubication',
         'observation',
-        'active'
+        'active',
     ];
 
 

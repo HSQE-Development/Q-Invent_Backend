@@ -14,6 +14,7 @@ class ProductDTO
     public ?string $observation;
     public string $active;
     public array $assignmentPeople;
+    public int $quantity_available;
 
     public function __construct(ProductEntity $entity)
     {
@@ -24,6 +25,9 @@ class ProductDTO
         $this->ubication = $entity->getUbication();
         $this->observation = $entity->getObservation();
         $this->active = $entity->isActive();
-        $this->assignmentPeople = $entity->getAssignmentPeople();
+        $this->quantity_available = $entity->getQuantity_available();
+        $this->assignmentPeople = array_map(function ($people) {
+            return new AssignmentPeopleDTO($people);
+        }, $entity->getAssignmentPeople());
     }
 }

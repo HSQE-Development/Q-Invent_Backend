@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Core\Application\UseCases\Product\AssignmentProduct;
 use App\Core\Application\UseCases\Product\CreateProduct;
 use App\Core\Application\UseCases\Product\DeleteProduct;
 use App\Core\Application\UseCases\Product\FindAllProducts;
@@ -21,19 +22,22 @@ class ProductController extends BaseController
     private UpdateProduct $updateProduct;
     private DeleteProduct $deleteProduct;
     private CreateProduct $createProduct;
+    private AssignmentProduct $assignmentProduct;
 
     public function __construct(
         FindAllProducts $findAllProducts,
         FindProductById $findProductById,
         UpdateProduct $updateProduct,
         DeleteProduct $deleteProduct,
-        CreateProduct $createProduct
+        CreateProduct $createProduct,
+        AssignmentProduct $assignmentProduct
     ) {
         $this->findAllProducts = $findAllProducts;
         $this->findProductById = $findProductById;
         $this->updateProduct = $updateProduct;
         $this->deleteProduct = $deleteProduct;
         $this->createProduct = $createProduct;
+        $this->assignmentProduct = $assignmentProduct;
     }
 
     public function index(Request $request)
@@ -128,13 +132,20 @@ class ProductController extends BaseController
                 'name' => 'string|max:255',
                 'email' => 'string',
                 'phone' => 'string|max:255',
-                'assigned_quantity' => 'int',
-                'people_id' => 'int'
+                'assigned_quantity' => 'integer',
+                'people_id' => 'nullable|int'
             ]);
-            
 
+            $product = $this->assignmentProduct->execute(
+                $id,
+                $validated["name"],
+                $validated["email"],
+                $validated["phone"],
+                $validated["assigned_quantity"],
+                $validated["people_id"],
+            );
 
-            return $this->sendResponse(["product" => null], message: "Producto asignado correctamente.", code: 200);
+            return $this->sendResponse(["product" => $product], message: "Producto asignado correctamente.", code: 200);
         } catch (\Exception $e) {
             return $this->sendError('Error inesperado', [$e->getMessage()], 500);
         }

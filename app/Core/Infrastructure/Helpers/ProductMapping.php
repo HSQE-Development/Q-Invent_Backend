@@ -15,6 +15,7 @@ class ProductMapping
      */
     public static function mapToEntity(Product $product): ProductEntity
     {
+        $assignmentPeople = $product->assignmentPeople()->get();
         return new ProductEntity(
             id: $product->id,
             name: $product->name,
@@ -23,9 +24,10 @@ class ProductMapping
             ubication: $product->ubication,
             observation: $product->observation,
             active: $product->active,
-            assignmentPeople: isset($product->assignmentPeople) ? $product->assignmentPeople()->get()->map(function ($people) {
-                return AssignmentPeopleMapping::mapToEntity($people);
-            })->toArray() : []
+            assignmentPeople: $assignmentPeople->map(function ($people) {
+                return AssignmentPeopleMapping::mapToEntity($people, $people->pivot);
+            })->toArray(),
+            quantity_available: $product->quantity_available
         );
     }
 }

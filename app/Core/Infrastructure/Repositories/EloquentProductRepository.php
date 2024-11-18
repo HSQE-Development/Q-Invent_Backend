@@ -17,21 +17,17 @@ class EloquentProductRepository implements ProductRepositoryInterface
         $perPage = isset($filters['per_page']) ? $filters['per_page'] : 10;
 
         $query = Product::query();
-
         $eloquentProducts = $query->with("assignmentPeople")->paginate($perPage, ["*"], "page", $page);
         $mappedProducts = $eloquentProducts->items(); // Devuelve la colección de productos de la página actual
 
         $mappedProducts = collect($mappedProducts)->map(function ($eloquentProduct) {
             return ProductMapping::mapToEntity($eloquentProduct);
         })->toArray();
-
-
         return PaginationMapping::mapToEntity(ProductTransformer::toDTOs($mappedProducts), $eloquentProducts)->toArray();
     }
     public function getById($id): ?ProductEntity
     {
         $eloquentUser =  Product::find($id);
-
         return $eloquentUser ? ProductMapping::mapToEntity($eloquentUser) : null;
     }
     public function getByIds($ids): array
@@ -72,7 +68,6 @@ class EloquentProductRepository implements ProductRepositoryInterface
             ]);
             $model->save();
         }
-
         return $user;
     }
 
@@ -90,5 +85,15 @@ class EloquentProductRepository implements ProductRepositoryInterface
     public function delete($id): bool
     {
         return Product::destroy($id);
+    }
+
+    public function assignProductToPeople($productId, $peopleId, $assignedQuantity): ProductEntity
+    {
+        $eloquentProduct = Product::with("assignmentPeople")->find($productId);
+        $eloquentProduct->assignmentPeople()->syncWithoutDetaching([
+            $peopleId => ['assigned_quantity' => $assignedQuantity]
+        ]);
+        $eloquentProduct->load('assignmentPeople');
+        return ProductMapping::mapToEntity($eloquentProduct);
     }
 }

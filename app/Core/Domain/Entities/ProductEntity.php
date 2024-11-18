@@ -17,6 +17,7 @@ class ProductEntity
     private ?string $observation;
     private ProductStatus $active;
     private array $assignmentPeople;
+    private int $quantity_available;
 
     public function __construct(
         ?int $id,
@@ -26,7 +27,8 @@ class ProductEntity
         string $ubication,
         ?string $observation,
         string $active,
-        array $assignmentPeople = []
+        array $assignmentPeople = [],
+        ?int $quantity_available,
     ) {
         $this->id = $id;
         $this->name = $name;
@@ -36,6 +38,7 @@ class ProductEntity
         $this->observation = $observation;
         $this->active = ProductStatus::tryFrom($active);
         $this->assignmentPeople = $assignmentPeople;
+        $this->quantity_available = $quantity_available ?? $total_quantity;
     }
 
     public function getId()
@@ -96,5 +99,13 @@ class ProductEntity
     public function getQuantityType()
     {
         return $this->quantity_type;
+    }
+
+    /**
+     * Get the value of quantity_available
+     */
+    public function getQuantity_available()
+    {
+        return $this->quantity_available;
     }
 }

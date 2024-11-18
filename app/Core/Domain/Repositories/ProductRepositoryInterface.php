@@ -62,4 +62,13 @@ interface ProductRepositoryInterface
      * @return bool
      */
     public function delete(int $id): bool;
+
+    /**
+     * Asigna cierta cantidad del producto a una persona 
+     * @param int $productId
+     * @param int $peopleId
+     * @param int $assignedQuantity
+     * @return \App\Core\Domain\Entities\ProductEntity
+     */
+    public function assignProductToPeople(int $productId, int $peopleId, int $assignedQuantity): ProductEntity;
 }

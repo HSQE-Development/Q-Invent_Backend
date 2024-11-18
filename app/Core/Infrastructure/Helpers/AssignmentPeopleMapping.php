@@ -13,13 +13,14 @@ class AssignmentPeopleMapping
      * @param AssignmentPeople $product
      * @return AssignmentPeopleEntity
      */
-    public static function mapToEntity(AssignmentPeople $people): AssignmentPeopleEntity
+    public static function mapToEntity(AssignmentPeople $people, ?object $pivot = null): AssignmentPeopleEntity
     {
         return new AssignmentPeopleEntity(
             id: $people->id,
             name: $people->name,
             phone: $people->phone,
             email: $people->email,
+            assigned_quantity: $pivot?->assigned_quantity,
         );
     }
 }
