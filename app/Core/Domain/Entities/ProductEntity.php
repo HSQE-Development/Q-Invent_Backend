@@ -2,11 +2,8 @@
 
 namespace App\Core\Domain\Entities;
 
-enum ProductStatus: string
-{
-    case Activo = "A";
-    case Inactivo = "I";
-}
+use App\Core\Domain\EnumProductStatus;
+
 class ProductEntity
 {
     private ?int $id;
@@ -15,7 +12,7 @@ class ProductEntity
     private string $quantity_type;
     private string $ubication;
     private ?string $observation;
-    private ProductStatus $active;
+    private EnumProductStatus $active;
     private array $assignmentPeople;
     private int $quantity_available;
 
@@ -36,7 +33,7 @@ class ProductEntity
         $this->quantity_type = $quantity_type;
         $this->ubication = $ubication;
         $this->observation = $observation;
-        $this->active = ProductStatus::tryFrom($active);
+        $this->active = EnumProductStatus::tryFrom($active);
         $this->assignmentPeople = $assignmentPeople;
         $this->quantity_available = $quantity_available ?? $total_quantity;
     }

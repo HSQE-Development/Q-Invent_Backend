@@ -8,8 +8,9 @@ use App\Core\Infrastructure\Transformers\AssignmentPeopleTransformer;
 class FindAllPeople
 {
     protected AssignmentPeopleRepositoryInterface $assignmentPeopleRepositoryInterface;
-    public function __construct(AssignmentPeopleRepositoryInterface $assignmentPeopleRepositoryInterface)
-    {
+    public function __construct(
+        AssignmentPeopleRepositoryInterface $assignmentPeopleRepositoryInterface
+    ) {
         $this->assignmentPeopleRepositoryInterface = $assignmentPeopleRepositoryInterface;
     }
 

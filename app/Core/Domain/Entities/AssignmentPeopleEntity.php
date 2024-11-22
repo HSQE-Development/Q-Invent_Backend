@@ -12,9 +12,9 @@ class AssignmentPeopleEntity
 
     public function __construct(
         ?int $id,
-        string $name,
-        string $email,
-        string $phone,
+        ?string $name,
+        ?string $email,
+        ?string $phone,
         ?int $assigned_quantity
     ) {
         $this->id = $id;

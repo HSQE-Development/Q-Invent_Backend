@@ -3,6 +3,7 @@
 namespace App\Core\Domain\Repositories;
 
 use App\Core\Domain\Entities\ProductEntity;
+use App\Core\Domain\EnumProductStatus;
 
 interface ProductRepositoryInterface
 {
@@ -64,11 +65,29 @@ interface ProductRepositoryInterface
     public function delete(int $id): bool;
 
     /**
-     * Asigna cierta cantidad del producto a una persona 
+     * Asigna cierta cantidad del producto a una persona;
+     * IMPORTANTE - Esta funcion asume que ya se valido que este disponible la cantidad a ser asignado
      * @param int $productId
      * @param int $peopleId
      * @param int $assignedQuantity
+     * @param bool $isUpdateable
      * @return \App\Core\Domain\Entities\ProductEntity
      */
-    public function assignProductToPeople(int $productId, int $peopleId, int $assignedQuantity): ProductEntity;
+    public function assignProductToPeople(int $productId, int $peopleId, int $assignedQuantity, bool $isUpdateable = false): ProductEntity;
+
+    /**
+     * Verificar si la cantidad a asignar de un producto esta disponible en el inventario o no
+     * @param int $productId
+     * @param int $totalForAssignment
+     * @return void
+     */
+    public function verifyDisponibilityInInventory(int $productId, int $totalForAssignment): bool;
+
+    public function updateAvailableQuantity(int $productId, int $totalForAssignment);
+    public function updateAvailableQuantityByTotalQuantity(int $productId): ProductEntity;
+
+    public function countTotalOfProducts(): int;
+    public function countTotalActiveOfProducts(): int;
+    public function countTotalInactiveOfProducts(): int;
+    public function returnAssignment(int $productId, int $peopleId): ProductEntity;
 }

@@ -38,6 +38,8 @@ class UpdateProduct
             ubication: $ubication ?? $existingProduct->getUbication(),
             observation: $observation  ?? $existingProduct->getObservation(),
             active: $active  ?? $existingProduct->isActive(),
+            assignmentPeople: $existingProduct->getAssignmentPeople(),
+            quantity_available: $existingProduct->getQuantity_available(),
         );
 
         $userUpdated = $this->productRepositoryInterface->update($productEntity, $id);

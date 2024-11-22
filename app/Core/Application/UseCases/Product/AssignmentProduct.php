@@ -22,11 +22,12 @@ class AssignmentProduct
 
     public function execute(
         int $product_id,
-        string $name,
-        string $email,
-        string $phone,
+        ?string $name,
+        ?string $email,
+        ?string $phone,
         string $assigned_quantity,
-        ?int $people_id
+        ?int $people_id,
+        bool $is_update = false
     ) {
 
         $existingPeople = $people_id
@@ -46,7 +47,7 @@ class AssignmentProduct
             );
             $existingPeople = $this->assignmentPeopleRepositoryInterface->store($newPeople);
         }
-        $productWithAssignment = $this->productRepositoryInterface->assignProductToPeople($product_id, $existingPeople->getId(), $assigned_quantity);
+        $productWithAssignment = $this->productRepositoryInterface->assignProductToPeople($product_id, $existingPeople->getId(), $assigned_quantity,  $is_update);
 
         return ProductTransformer::toDTO($productWithAssignment);
     }

@@ -30,7 +30,9 @@ class CreateProduct
             $quantity_type,
             $ubication,
             $observation,
-            $active
+            $active,
+            [],
+            $total_quantity
         );
         $this->productRepositoryInterface->store($customer);
         return ProductTransformer::toDTO($customer);
