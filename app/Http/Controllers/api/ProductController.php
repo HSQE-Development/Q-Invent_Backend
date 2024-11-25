@@ -95,7 +95,7 @@ class ProductController extends BaseController
                 $validated['name'],
                 $validated['total_quantity'],
                 $validated['quantity_type'],
-                $validated['observation'],
+                $validated['ubication'],
                 $validated['observation'],
             );
             return $this->sendResponse(["product" => $product], "Producto creado correctamente.", 201);
