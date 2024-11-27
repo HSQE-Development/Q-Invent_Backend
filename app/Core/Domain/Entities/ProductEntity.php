@@ -10,7 +10,7 @@ class ProductEntity
     private string $name;
     private int $total_quantity;
     private string $quantity_type;
-    private string $ubication;
+    private UbicationEntity $ubication;
     private ?string $observation;
     private EnumProductStatus $active;
     private array $assignmentPeople;
@@ -21,7 +21,7 @@ class ProductEntity
         string $name,
         int $total_quantity,
         string $quantity_type,
-        string $ubication,
+        UbicationEntity $ubication,
         ?string $observation,
         string $active,
         array $assignmentPeople = [],

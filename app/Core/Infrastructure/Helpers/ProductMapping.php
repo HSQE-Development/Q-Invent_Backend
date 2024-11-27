@@ -21,7 +21,7 @@ class ProductMapping
             name: $product->name,
             total_quantity: $product->total_quantity,
             quantity_type: $product->quantity_type,
-            ubication: $product->ubication,
+            ubication: UbicationMapping::mapToEntity($product->ubication()->first()),
             observation: $product->observation,
             active: $product->active,
             assignmentPeople: $assignmentPeople->map(function ($people) {

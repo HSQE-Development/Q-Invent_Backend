@@ -3,7 +3,6 @@
 namespace App\Core\Infrastructure\Repositories;
 
 use App\Core\Domain\Entities\ProductEntity;
-use App\Core\Domain\Entities\ProductStatus;
 use App\Core\Domain\EnumProductStatus;
 use App\Core\Domain\Repositories\ProductRepositoryInterface;
 use App\Core\Infrastructure\Helpers\PaginationMapping;
@@ -12,7 +11,6 @@ use App\Core\Infrastructure\Transformers\ProductTransformer;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class EloquentProductRepository implements ProductRepositoryInterface
 {
