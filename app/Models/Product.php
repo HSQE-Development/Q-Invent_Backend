@@ -43,4 +43,9 @@ class Product extends Model
     {
         return $this->belongsTo(Ubication::class);
     }
+
+    public function productHistories()
+    {
+        return $this->hasMany(ProductHistory::class);
+    }
 }
