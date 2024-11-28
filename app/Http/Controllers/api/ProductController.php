@@ -240,7 +240,10 @@ class ProductController extends BaseController
     public function unassignPeople(Request $request, int $product, int $people)
     {
         try {
-            $product = $this->returnAssignment->execute($product, $people);
+            $validate = $request->validate([
+                'observation' => 'required|string',
+            ]);
+            $product = $this->returnAssignment->execute($product, $people, $validate["observation"]);
             return $this->sendResponse(
                 ['product' => $product],
                 'Devolucion Completa.'
@@ -275,7 +278,7 @@ class ProductController extends BaseController
         } catch (\Exception $e) {
             return $this->sendError("Error al importar productos", $e->getMessage(), 500);
         } finally {
-            unlink($tempFilePath); // Eliminar el archivo temporal
+            unlink($tempFilePath);
         }
     }
 }

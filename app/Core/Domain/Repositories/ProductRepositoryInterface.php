@@ -73,7 +73,7 @@ interface ProductRepositoryInterface
      * @param bool $isUpdateable
      * @return \App\Core\Domain\Entities\ProductEntity
      */
-    public function assignProductToPeople(int $productId, int $peopleId, int $assignedQuantity, string $observation, bool $isUpdateable = false): ProductEntity;
+    public function assignProductToPeople(int $productId, int $peopleId, int $assignedQuantity, bool $isUpdateable = false): ProductEntity;
 
     /**
      * Verificar si la cantidad a asignar de un producto esta disponible en el inventario o no

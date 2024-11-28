@@ -2,9 +2,11 @@
 
 namespace App\Core\Application\UseCases\Product;
 
+use App\Core\Application\UseCases\ProductHistory\CreateProductHistory;
 use App\Core\Application\UseCases\Ubication\FindUbicationById;
 use App\Core\Domain\Entities\ProductEntity;
 use App\Core\Domain\Repositories\ProductRepositoryInterface;
+use App\Core\Infrastructure\Helpers\ProductHistoryMapping;
 use App\Core\Infrastructure\Helpers\UbicationMapping;
 use App\Core\Infrastructure\Transformers\ProductTransformer;
 use Exception;
@@ -12,12 +14,17 @@ use Exception;
 class CreateProduct
 {
     protected ProductRepositoryInterface $productRepositoryInterface;
+    protected CreateProductHistory $createProductHistory;
     protected FindUbicationById $findUbicationById;
 
-    public function __construct(ProductRepositoryInterface $productRepositoryInterface, FindUbicationById $findUbicationById)
-    {
+    public function __construct(
+        ProductRepositoryInterface $productRepositoryInterface,
+        FindUbicationById $findUbicationById,
+        CreateProductHistory $createProductHistory
+    ) {
         $this->productRepositoryInterface = $productRepositoryInterface;
         $this->findUbicationById = $findUbicationById;
+        $this->createProductHistory = $createProductHistory;
     }
 
     public function execute(
@@ -35,7 +42,7 @@ class CreateProduct
             throw new Exception("No se encontro la ubicación", 404);
         }
 
-        $customer = new ProductEntity(
+        $product = new ProductEntity(
             null,
             $name,
             $total_quantity,
@@ -46,7 +53,20 @@ class CreateProduct
             [],
             $total_quantity
         );
-        $this->productRepositoryInterface->store($customer);
-        return ProductTransformer::toDTO($customer);
+        $product = $this->productRepositoryInterface->store($product);
+        $history = $this->createProductHistory->execute(
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            "Producto agregado al inventario",
+            $product->getId()
+        );
+        $product->getProductHistories()[] = ProductHistoryMapping::dtoToEntity($history);
+
+
+        return ProductTransformer::toDTO($product);
     }
 }

@@ -166,13 +166,13 @@ class EloquentProductRepository implements ProductRepositoryInterface
         return ProductMapping::mapToEntity($eloquentProduct);
     }
 
-    public function assignProductToPeople($productId, $peopleId, $assignedQuantity, $observation, $isUpdateable = false): ProductEntity
+    public function assignProductToPeople($productId, $peopleId, $assignedQuantity, $isUpdateable = false): ProductEntity
     {
         $eloquentProduct = Product::with("assignmentPeople")->find($productId);
         if (!$eloquentProduct) {
             throw new \Exception("Producto no encontrado", 404);
         }
-        DB::transaction(function () use ($eloquentProduct, $peopleId, $assignedQuantity, $isUpdateable, $observation) {
+        DB::transaction(function () use ($eloquentProduct, $peopleId, $assignedQuantity, $isUpdateable) {
             $existingAssignment = $eloquentProduct->assignmentPeople()->where('assignment_people.id', $peopleId)->first();
             $previousQuantity = $existingAssignment ? $existingAssignment->pivot->assigned_quantity : 0;
             $newAssignedQuantity = $isUpdateable ? $assignedQuantity : ($previousQuantity + $assignedQuantity);
@@ -180,7 +180,6 @@ class EloquentProductRepository implements ProductRepositoryInterface
             $eloquentProduct->assignmentPeople()->syncWithoutDetaching([
                 $peopleId => [
                     'assigned_quantity' => $newAssignedQuantity,
-                    'observation' => $observation,
                     "assign_date" => $dateTimeNow->format('Y-m-d H:i:s')
                 ]
             ]);

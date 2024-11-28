@@ -33,7 +33,6 @@ class Product extends Model
     {
         return $this->belongsToMany(AssignmentPeople::class, "product_assignment_people", "product_id", "assignment_person_id")
             ->withPivot("assigned_quantity")
-            ->withPivot("observation")
             ->withPivot("assign_date")
             ->withPivot("devolution_date")
             ->withTimestamps();

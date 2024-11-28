@@ -26,6 +26,8 @@ class AssignmentPeople extends Model
     {
         return $this->belongsToMany(Product::class, 'product_assignment_people', 'assignment_person_id', 'product_id')
             ->withPivot('assigned_quantity')
+            ->withPivot('assign_date')
+            ->withPivot('devolution_date')
             ->withTimestamps();
     }
 }

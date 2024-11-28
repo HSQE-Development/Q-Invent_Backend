@@ -3,17 +3,18 @@
 namespace App\DTO;
 
 use App\Core\Domain\Entities\ProductHistoryEntity;
+use App\Core\Infrastructure\Transformers\ProductTransformer;
 
 class ProductHistoryDTO
 {
     public ?int $id;
-    public string $people_name;
-    public string $people_phone;
-    public string $people_email;
-    public int $assignment_quantity;
-    public string $assign_date;
-    public string $devolution_date;
-    public string $observation;
+    public ?string $people_name;
+    public ?string $people_phone;
+    public ?string $people_email;
+    public ?int $assignment_quantity;
+    public ?string $assign_date;
+    public ?string $devolution_date;
+    public ?string $observation;
 
     public function __construct(ProductHistoryEntity $entity)
     {

@@ -23,4 +23,9 @@ class ProductHistory extends Model
         'devolution_date',
         'observation',
     ];
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
 }

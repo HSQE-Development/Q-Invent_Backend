@@ -15,6 +15,7 @@ class ProductDTO
     public string $active;
     public array $assignmentPeople;
     public int $quantity_available;
+    public array $productHistories;
 
     public function __construct(ProductEntity $entity)
     {
@@ -29,5 +30,8 @@ class ProductDTO
         $this->assignmentPeople = array_map(function ($people) {
             return new AssignmentPeopleDTO($people);
         }, $entity->getAssignmentPeople());
+        $this->productHistories = array_map(function ($history) {
+            return new ProductHistoryDTO($history);
+        }, $entity->getProductHistories());
     }
 }

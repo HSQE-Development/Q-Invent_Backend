@@ -21,6 +21,8 @@ class AssignmentPeopleMapping
             phone: $people->phone,
             email: $people->email,
             assigned_quantity: $pivot?->assigned_quantity,
+            assign_date: $pivot?->assign_date,
+            devolution_date: $pivot?->devolution_date
         );
     }
 }

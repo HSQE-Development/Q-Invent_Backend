@@ -15,6 +15,7 @@ class ProductEntity
     private EnumProductStatus $active;
     private array $assignmentPeople;
     private int $quantity_available;
+    private array $productHistories;
 
     public function __construct(
         ?int $id,
@@ -26,6 +27,7 @@ class ProductEntity
         string $active,
         array $assignmentPeople = [],
         ?int $quantity_available,
+        array $productHistories = []
     ) {
         $this->id = $id;
         $this->name = $name;
@@ -36,6 +38,7 @@ class ProductEntity
         $this->active = EnumProductStatus::tryFrom($active);
         $this->assignmentPeople = $assignmentPeople;
         $this->quantity_available = $quantity_available ?? $total_quantity;
+        $this->productHistories = $productHistories;
     }
 
     public function getId()
@@ -104,5 +107,13 @@ class ProductEntity
     public function getQuantity_available()
     {
         return $this->quantity_available;
+    }
+
+    /**
+     * Get the value of productHistories
+     */
+    public function getProductHistories()
+    {
+        return $this->productHistories;
     }
 }

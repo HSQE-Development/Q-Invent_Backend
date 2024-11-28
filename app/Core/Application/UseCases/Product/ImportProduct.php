@@ -2,10 +2,12 @@
 
 namespace App\Core\Application\UseCases\Product;
 
+use App\Core\Application\UseCases\ProductHistory\CreateProductHistory;
 use App\Core\Application\UseCases\Ubication\FindUbicationByName;
 use App\Core\Domain\Entities\ProductEntity;
 use App\Core\Domain\Repositories\ProductRepositoryInterface;
 use App\Core\Domain\Services\ExcelReaderServiceInterface;
+use App\Core\Infrastructure\Helpers\ProductHistoryMapping;
 use App\Core\Infrastructure\Helpers\UbicationMapping;
 use App\Core\Infrastructure\Transformers\ProductTransformer;
 
@@ -14,14 +16,18 @@ class ImportProduct
     private ExcelReaderServiceInterface $excelReaderServiceInterface;
     private FindUbicationByName $findUbicationByName;
     private ProductRepositoryInterface $productRepositoryInterface;
+    protected CreateProductHistory $createProductHistory;
+
     public function __construct(
         ExcelReaderServiceInterface $excelReaderServiceInterface,
         FindUbicationByName $findUbicationByName,
-        ProductRepositoryInterface $productRepositoryInterface
+        ProductRepositoryInterface $productRepositoryInterface,
+        CreateProductHistory $createProductHistory
     ) {
         $this->excelReaderServiceInterface = $excelReaderServiceInterface;
         $this->findUbicationByName = $findUbicationByName;
         $this->productRepositoryInterface = $productRepositoryInterface;
+        $this->createProductHistory = $createProductHistory;
     }
 
     public function execute(string $filePath)
@@ -84,12 +90,28 @@ class ImportProduct
         }
         if (!empty($productsToUpdate)) {
             $updateResult = $this->productRepositoryInterface->updateMassiveProducts($productsToUpdate);
-            $allProducts = array_merge($allProducts, $updateResult['products_saved']);
+            foreach ($updateResult['products_saved'] as $updatedProduct) {
+                $allProducts[] = $updatedProduct;
+            }
             $errors = array_merge($errors, $updateResult['errors']);
         }
         if (!empty($productsToAdd)) {
             $storeResult = $this->productRepositoryInterface->storeMassiveProducts($productsToAdd);
-            $allProducts = array_merge($allProducts, $storeResult['products_saved']);
+
+            foreach ($storeResult['products_saved'] as $newP) {
+                $history = $this->createProductHistory->execute(
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    "Producto agregado al inventario",
+                    $newP->getId()
+                );
+                $newP->getProductHistories()[] = ProductHistoryMapping::dtoToEntity($history);
+                $allProducts[] = $newP;
+            }
             $errors = array_merge($errors, $storeResult['errors']);
         }
         return [ProductTransformer::toDTOs($allProducts), $errors];

@@ -5,23 +5,23 @@ namespace App\Core\Domain\Entities;
 class ProductHistoryEntity
 {
     private ?int $id;
-    private string $people_name;
-    private string $people_phone;
-    private string $people_email;
-    private int $assignment_quantity;
-    private string $assign_date;
-    private string $devolution_date;
-    private string $observation;
+    private ?string $people_name;
+    private ?string $people_phone;
+    private ?string $people_email;
+    private ?int $assignment_quantity;
+    private ?string $assign_date;
+    private ?string $devolution_date;
+    private ?string $observation;
 
     public function __construct(
         ?int $id,
-        string $people_name,
-        string $people_phone,
-        string $people_email,
-        int $assignment_quantity,
-        string $assign_date,
-        string $devolution_date,
-        string $observation,
+        ?string $people_name,
+        ?string $people_phone,
+        ?string $people_email,
+        ?int $assignment_quantity,
+        ?string $assign_date,
+        ?string $devolution_date,
+        ?string $observation,
     ) {
         $this->id = $id;
         $this->people_name = $people_name;
