@@ -6,4 +6,5 @@ Route::prefix("v1")->group(function () {
     require __DIR__ . "/api/api_auth.php";
     require __DIR__ . "/api/api_product.php";
     require __DIR__ . "/api/api_assignment_people.php";
+    require __DIR__ . "/api/api_ubication.php";
 });

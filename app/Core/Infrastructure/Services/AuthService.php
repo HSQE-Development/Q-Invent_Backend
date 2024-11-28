@@ -73,6 +73,8 @@ class AuthService implements AuthServiceInterface
             $authenticatedUser->email,
             $authenticatedUser->activo,
             $authenticatedUser->password,
+            $authenticatedUser->email_verified_at,
+            $authenticatedUser->is_superuser,
         ));
         // Crear instancia de AuthEntity
         $tokenData = [

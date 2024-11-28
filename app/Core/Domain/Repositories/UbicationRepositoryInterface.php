@@ -19,4 +19,6 @@ interface UbicationRepositoryInterface
      * @return UbicationEntity|null
      */
     public function getById(int $id): ?UbicationEntity;
+
+    public function getByName(string $name): ?UbicationEntity;
 }

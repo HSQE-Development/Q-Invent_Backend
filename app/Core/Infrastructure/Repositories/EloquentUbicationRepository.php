@@ -22,4 +22,10 @@ class EloquentUbicationRepository implements UbicationRepositoryInterface
         $eloquentUbication =  Ubication::find($id);
         return $eloquentUbication ? UbicationMapping::mapToEntity($eloquentUbication) : null;
     }
+
+    public function getByName(string $name): ?UbicationEntity
+    {
+        $eloquentUbication = Ubication::whereRaw("LOWER(name) = ?", [strtolower($name)])->first();
+        return $eloquentUbication ? UbicationMapping::mapToEntity($eloquentUbication) : null;
+    }
 }

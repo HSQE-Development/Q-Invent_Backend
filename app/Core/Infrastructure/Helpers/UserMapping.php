@@ -24,6 +24,7 @@ class UserMapping
             password: $userModel->password,
             activo: $userModel->activo,
             email_verified_at: $userModel->email_verified_at,
+            is_superuser: $userModel->is_superuser,
         );
     }
 }

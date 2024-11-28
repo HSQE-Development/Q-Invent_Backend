@@ -15,4 +15,11 @@ class UbicationMapping
             name: $ubication->name
         );
     }
+    public static function dtoToEntity(UbicationDTO $ubication)
+    {
+        return new UbicationEntity(
+            id: $ubication->id,
+            name: $ubication->name
+        );
+    }
 }

@@ -9,6 +9,8 @@ use App\Core\Infrastructure\Helpers\PaginationMapping;
 use App\Core\Infrastructure\Helpers\ProductMapping;
 use App\Core\Infrastructure\Transformers\ProductTransformer;
 use App\Models\Product;
+use App\Models\Ubication;
+use DateTime;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 
@@ -17,7 +19,7 @@ class EloquentProductRepository implements ProductRepositoryInterface
     public function index($filters = [])
     {
         $page = $filters['page'] ?? 1; // Página actual
-        $perPage =  $filters['per_page'] ?? 10;
+        $perPage =  $filters['per_page'] ?? 50;
 
         $productName = $filters['productName'] ?? null;
         $productStatus = $filters["productStatus"] ?? null;
@@ -60,10 +62,12 @@ class EloquentProductRepository implements ProductRepositoryInterface
     public function store(ProductEntity $product): ProductEntity
     {
         $eloquentProduct = new Product();
+        $eloquentProduct->id = $product->getId();
         $eloquentProduct->name = $product->getName();
         $eloquentProduct->total_quantity = $product->getTotal_quantity();
         $eloquentProduct->quantity_type = $product->getQuantityType();
-        $eloquentProduct->ubication = $product->getUbication();
+        $eloquentProduct->quantity_available = $product->getQuantity_available();
+        $eloquentProduct->ubication_id = $product->getUbication()->getId();
         $eloquentProduct->observation = $product->getObservation();
         $eloquentProduct->active = $product->isActive();
         $eloquentProduct->save();
@@ -72,20 +76,27 @@ class EloquentProductRepository implements ProductRepositoryInterface
         return $product;
     }
 
-    public function update(ProductEntity $user, int $id): ProductEntity
+    public function update(ProductEntity $product, int $id): ProductEntity
     {
         $model = Product::find($id);
         if ($model) {
+            $oldTotalQuantity = $model->total_quantity;
+
             $model->fill([
-                'name' => $user->getName(),
-                'total_quantity' => $user->getTotal_quantity(),
-                'ubication' => $user->getUbication(),
-                'observation' => $user->getObservation(),
-                'active' => $user->isActive(),
+                'name' => $product->getName(),
+                'total_quantity' => $product->getTotal_quantity(),
+                'ubication_id' => $product->getUbication()->getId(),
+                'observation' => $product->getObservation(),
+                'active' => $product->isActive(),
             ]);
+            if ($oldTotalQuantity !== $product->getTotal_quantity()) {
+                $assignedQuantity = $model->assignmentPeople()->sum('assigned_quantity');
+                $quantityAvailable = max(0, $product->getTotal_quantity() - $assignedQuantity);
+                $model->quantity_available = $quantityAvailable;
+            }
             $model->save();
         }
-        return $user;
+        return $product;
     }
 
     public function updateEspecificColumn(int $id, array $data_to_change): ?ProductEntity
@@ -155,21 +166,23 @@ class EloquentProductRepository implements ProductRepositoryInterface
         return ProductMapping::mapToEntity($eloquentProduct);
     }
 
-    public function assignProductToPeople($productId, $peopleId, $assignedQuantity, $isUpdateable = false): ProductEntity
+    public function assignProductToPeople($productId, $peopleId, $assignedQuantity, $observation, $isUpdateable = false): ProductEntity
     {
         $eloquentProduct = Product::with("assignmentPeople")->find($productId);
-
         if (!$eloquentProduct) {
-            throw new \Exception("Producto no encontrado", 404); // O el tipo de excepción que prefieras
+            throw new \Exception("Producto no encontrado", 404);
         }
-        DB::transaction(function () use ($eloquentProduct, $peopleId, $assignedQuantity, $isUpdateable) {
+        DB::transaction(function () use ($eloquentProduct, $peopleId, $assignedQuantity, $isUpdateable, $observation) {
             $existingAssignment = $eloquentProduct->assignmentPeople()->where('assignment_people.id', $peopleId)->first();
             $previousQuantity = $existingAssignment ? $existingAssignment->pivot->assigned_quantity : 0;
-
             $newAssignedQuantity = $isUpdateable ? $assignedQuantity : ($previousQuantity + $assignedQuantity);
-
+            $dateTimeNow = new DateTime();
             $eloquentProduct->assignmentPeople()->syncWithoutDetaching([
-                $peopleId => ['assigned_quantity' => $newAssignedQuantity]
+                $peopleId => [
+                    'assigned_quantity' => $newAssignedQuantity,
+                    'observation' => $observation,
+                    "assign_date" => $dateTimeNow->format('Y-m-d H:i:s')
+                ]
             ]);
         });
         $eloquentProduct->load('assignmentPeople');
@@ -199,5 +212,66 @@ class EloquentProductRepository implements ProductRepositoryInterface
         $product->assignmentPeople()->detach($peopleId);
         $product->save();
         return ProductMapping::mapToEntity($product);
+    }
+
+    public function storeMassiveProducts(array $products): array
+    {
+        try {
+            $productsSaved = [];
+            $errors = [];
+            DB::transaction(function () use ($products, &$productsSaved, &$errors) {
+                foreach ($products as $index => $product) {
+                    try {
+                        $productsSaved[] = $this->store($product);
+                    } catch (\Throwable $e) {
+                        $errors[] = [
+                            'index' => $index,
+                            'error' => $e->getMessage(),
+                        ];
+                        throw $e;
+                    }
+                }
+            });
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+
+        return [
+            'products_saved' => $productsSaved,
+            'errors' => $errors,
+        ];
+    }
+    public function updateMassiveProducts(array $products): array
+    {
+        try {
+            $productsSaved = [];
+            $errors = [];
+            DB::transaction(function () use ($products, &$productsSaved, &$errors) {
+                foreach ($products as $index => $product) {
+                    try {
+                        $productsSaved[] = $this->update($product, $product->getId());
+                    } catch (\Throwable $e) {
+                        $errors[] = [
+                            'index' => $index,
+                            'error' => $e->getMessage(),
+                        ];
+                        throw $e;
+                    }
+                }
+            });
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+
+        return [
+            'products_saved' => $productsSaved,
+            'errors' => $errors,
+        ];
+    }
+
+    public function getByName(string $name): ?ProductEntity
+    {
+        $eloquentProduct = Product::whereRaw("LOWER(name) = ?", [strtolower($name)])->first();
+        return $eloquentProduct ? ProductMapping::mapToEntity($eloquentProduct) : null;
     }
 }

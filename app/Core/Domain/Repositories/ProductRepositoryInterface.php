@@ -73,7 +73,7 @@ interface ProductRepositoryInterface
      * @param bool $isUpdateable
      * @return \App\Core\Domain\Entities\ProductEntity
      */
-    public function assignProductToPeople(int $productId, int $peopleId, int $assignedQuantity, bool $isUpdateable = false): ProductEntity;
+    public function assignProductToPeople(int $productId, int $peopleId, int $assignedQuantity, string $observation, bool $isUpdateable = false): ProductEntity;
 
     /**
      * Verificar si la cantidad a asignar de un producto esta disponible en el inventario o no
@@ -90,4 +90,8 @@ interface ProductRepositoryInterface
     public function countTotalActiveOfProducts(): int;
     public function countTotalInactiveOfProducts(): int;
     public function returnAssignment(int $productId, int $peopleId): ProductEntity;
+
+    public function storeMassiveProducts(array $products): array;
+    public function updateMassiveProducts(array $products): array;
+    public function getByName(string $name): ?ProductEntity;
 }

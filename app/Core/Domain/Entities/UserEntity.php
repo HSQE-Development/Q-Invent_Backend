@@ -9,6 +9,7 @@ class UserEntity
     private string $lastName;
     private string $email;
     private ?string $password;
+    private bool $is_superuser;
     private bool $activo;
     private ?string $email_verified_at;
 
@@ -21,6 +22,7 @@ class UserEntity
         ?string $password,
         bool $activo,
         ?string $email_verified_at = null,
+        bool $is_superuser
     ) {
         $this->id = $id;
         $this->firstName = $firstName;
@@ -29,6 +31,7 @@ class UserEntity
         $this->password = $password;
         $this->activo = $activo;
         $this->email_verified_at = $email_verified_at;
+        $this->is_superuser = $is_superuser;
     }
     /**
      * Get the value of id
@@ -147,5 +150,13 @@ class UserEntity
     public function setEmail_verified_at($email_verified_at)
     {
         $this->email_verified_at = $email_verified_at;
+    }
+
+    /**
+     * Get the value of is_superuser
+     */
+    public function getIs_superuser()
+    {
+        return $this->is_superuser;
     }
 }

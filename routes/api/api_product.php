@@ -11,6 +11,7 @@ Route::group([
         Route::post('{id}/bulk/assignment', [ProductController::class, "bulkAssignmentProduct"]);
         Route::get('/counts', [ProductController::class, "countProductsByState"]);
         Route::post('{product}/unassignment/{people}', [ProductController::class, "unassignPeople"]);
+        Route::post('/import/excel', [ProductController::class, "importData"]);
     });
     Route::resource("products", ProductController::class);
 });

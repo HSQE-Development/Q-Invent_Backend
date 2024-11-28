@@ -12,6 +12,7 @@ class UserDTO
     public $email;
     public $activo;
     public $email_verified_at;
+    public $is_superuser;
 
     public function __construct(UserEntity $userEntity)
     {
@@ -21,5 +22,6 @@ class UserDTO
         $this->email = $userEntity->getEmail();
         $this->activo = $userEntity->getActivo();
         $this->email_verified_at = $userEntity->getEmail_verified_at();
+        $this->is_superuser = $userEntity->getIs_superuser();
     }
 }

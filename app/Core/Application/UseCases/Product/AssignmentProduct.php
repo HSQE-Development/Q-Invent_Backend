@@ -25,7 +25,7 @@ class AssignmentProduct
         ?string $name,
         ?string $email,
         ?string $phone,
-        string $assigned_quantity,
+        int $assigned_quantity,
         ?int $people_id,
         bool $is_update = false
     ) {

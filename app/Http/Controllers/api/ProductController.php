@@ -8,18 +8,15 @@ use App\Core\Application\UseCases\Product\CreateProduct;
 use App\Core\Application\UseCases\Product\DeleteProduct;
 use App\Core\Application\UseCases\Product\FindAllProducts;
 use App\Core\Application\UseCases\Product\FindProductById;
+use App\Core\Application\UseCases\Product\ImportProduct;
 use App\Core\Application\UseCases\Product\MultiAssignmentProduct;
 use App\Core\Application\UseCases\Product\ReturnAssignment;
 use App\Core\Application\UseCases\Product\UpdateAvailableQuantity;
 use App\Core\Application\UseCases\Product\UpdateProduct;
 use App\Core\Application\UseCases\Product\VerifyDisponibility;
-use App\Core\Domain\EnumProductStatus;
 use App\Http\Controllers\API\BaseController;
-use App\Models\AssignmentPerson;
-use App\Models\AssignPeople;
-use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 class ProductController extends BaseController
@@ -35,6 +32,7 @@ class ProductController extends BaseController
     private UpdateAvailableQuantity $updateAvailableQuantity;
     private CountOfProductsByState $countOfProductsByState;
     private ReturnAssignment $returnAssignment;
+    private ImportProduct $importProduct;
 
     public function __construct(
         FindAllProducts $findAllProducts,
@@ -47,7 +45,8 @@ class ProductController extends BaseController
         VerifyDisponibility $verifyDisponibility,
         UpdateAvailableQuantity $updateAvailableQuantity,
         CountOfProductsByState $countOfProductsByState,
-        ReturnAssignment $returnAssignment
+        ReturnAssignment $returnAssignment,
+        ImportProduct $importProduct
     ) {
         $this->findAllProducts = $findAllProducts;
         $this->findProductById = $findProductById;
@@ -60,6 +59,7 @@ class ProductController extends BaseController
         $this->updateAvailableQuantity = $updateAvailableQuantity;
         $this->countOfProductsByState = $countOfProductsByState;
         $this->returnAssignment = $returnAssignment;
+        $this->importProduct = $importProduct;
     }
 
     public function index(Request $request)
@@ -87,7 +87,7 @@ class ProductController extends BaseController
                 'name' => 'required|string|max:255',
                 'total_quantity' => 'required|int',
                 'quantity_type' => 'required|string',
-                'ubication' => 'required|string|max:255',
+                'ubication' => 'required|int',
                 'observation' => 'string|max:255',
             ]);
 
@@ -114,7 +114,7 @@ class ProductController extends BaseController
                 'name' => 'string|max:255',
                 'total_quantity' => 'int',
                 'quantity_type' => 'string',
-                'ubication' => 'string|max:255',
+                'ubication' => 'int',
                 'observation' => 'string|max:255',
                 'active' => 'string|max:2',
             ]);
@@ -124,7 +124,7 @@ class ProductController extends BaseController
                 name: $validated['name'] ?? null,
                 total_quantity: $validated['total_quantity'] ?? null,
                 quantity_type: $validated['quantity_type'] ?? null,
-                ubication: $validated['ubication'] ?? null,
+                ubicationId: $validated['ubication'] ?? null,
                 observation: $validated['observation'] ?? null,
                 active: $validated['active'] ?? null,
             );
@@ -247,6 +247,35 @@ class ProductController extends BaseController
             );
         } catch (\Exception $e) {
             return $this->sendError('Error inesperado', [$e->getMessage()], 500);
+        }
+    }
+
+    public function importData(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'file_base64' => 'required|string',
+        ]);
+        if ($validator->fails()) {
+            return $this->sendError("Error al cargar el archivo", $validator->errors(), 422);
+        }
+
+        $fileBase64 = $request->input('file_base64');
+        $fileContent = base64_decode($fileBase64);
+        $tempFilePath = storage_path('app/temp.xlsx');
+        file_put_contents($tempFilePath, $fileContent);
+
+        try {
+            $result = $this->importProduct->execute($tempFilePath);
+            $products = $result[0] ?? [];
+            $errors = $result[1] ?? [];
+            if (!empty($errors)) {
+                return $this->sendError("Errores al importar productos", $errors, 400);
+            }
+            return $this->sendResponse(["products" => $products], "Cargue exitoso.");
+        } catch (\Exception $e) {
+            return $this->sendError("Error al importar productos", $e->getMessage(), 500);
+        } finally {
+            unlink($tempFilePath); // Eliminar el archivo temporal
         }
     }
 }
