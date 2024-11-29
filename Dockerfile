@@ -23,7 +23,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 COPY . .
 
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer install --no-dev --optimize-autoloader --no-interaction || { echo "Composer install failed"; exit 1; }
 # Exponer el puerto 9000 para que Nginx pueda comunicarse con PHP-FPM
 EXPOSE 9000
 
