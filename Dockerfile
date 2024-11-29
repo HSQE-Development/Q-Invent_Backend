@@ -16,7 +16,6 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install gd pdo pdo_mysql zip xml
 
-RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring zip exif pcntl
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Composer
