@@ -7,7 +7,7 @@ services:
     restart: always
     command: sh -c "/usr/local/bin/wait-for-it.sh 162.215.135.37:33080 && php artisan migrate --force && php-fpm"
     volumes:
-      - .:/app
+      - .:/var/www
       - ./docker-compose/php/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
       - laravel_network
@@ -21,7 +21,7 @@ services:
     ports:
       - "9080:80"  # Exponer puerto 9080 en el host
     volumes:
-      - .:/app
+      - .:/var/www
       - ./docker-compose/nginx:/etc/nginx/conf.d/
     depends_on:
       - laravel_api
