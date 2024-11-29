@@ -9,7 +9,6 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libfreetype6-dev \
     libzip-dev \
-    git \
     unzip \
     curl \
     libxml2-dev \
@@ -23,8 +22,6 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Clear cache
 
 COPY . .
-
-RUN chown -R root:root /app && chmod -R 775 /app
 
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 # Exponer el puerto 9000 para que Nginx pueda comunicarse con PHP-FPM
