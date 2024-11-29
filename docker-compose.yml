@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile 
     restart: always
-    command: sh -c "/usr/local/bin/wait-for-it.sh 162.215.135.37:33080"
+    command: sh -c "/usr/local/bin/wait-for-it.sh 162.215.135.37:33080 -- php-fpm"
     volumes:
       - .:/app
       - ./docker-compose/php/local.ini:/usr/local/etc/php/conf.d/local.ini
