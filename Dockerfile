@@ -24,7 +24,7 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 COPY . /var/www
 
 # Cambiar la propiedad de todos los archivos al usuario www-data
-RUN chown -R www-data:www-data /var/www
+RUN chown -R www-data:www-data /var/www && chmod -R 755 /var/www
 
 USER www-data
 
