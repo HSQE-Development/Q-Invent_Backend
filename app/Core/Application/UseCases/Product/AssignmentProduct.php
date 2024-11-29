@@ -45,6 +45,16 @@ class AssignmentProduct
                 "email" => StringHelper::convertMinusculesWithoutTyldes($email),
             ]);
 
+        $existingProduct = $this->productRepositoryInterface->getById($product_id);
+        $difference = null;
+        foreach ($existingProduct->getAssignmentPeople() as $assign) {
+            if ($assign->getId() === $existingPeople->getId()) {
+                if ($assigned_quantity < $assign->getAssigned_quantity()) {
+                    $difference = $assign->getAssigned_quantity() - $assigned_quantity;
+                }
+            }
+        }
+
         if (!$existingPeople) {
             $newPeople = new AssignmentPeopleEntity(
                 null,
@@ -63,6 +73,8 @@ class AssignmentProduct
             $assigned_quantity,
             $is_update
         );
+
+
         $dateTimeNow = new DateTime();
         $history = $this->createProductHistory->execute(
             $existingPeople->getName(),
@@ -70,8 +82,8 @@ class AssignmentProduct
             $existingPeople->getEmail(),
             $assigned_quantity,
             $dateTimeNow->format('Y-m-d H:i:s'),
-            null,
-            "Producto Asignado",
+            $difference ? $dateTimeNow->format('Y-m-d H:i:s') : null,
+            $difference ? "Se devolvieron {$difference} unidades" : "Se asignaron {$assigned_quantity} unidades",
             $productWithAssignment->getId()
         );
         $productWithAssignment->getProductHistories()[] = ProductHistoryMapping::dtoToEntity($history);

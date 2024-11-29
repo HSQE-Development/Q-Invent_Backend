@@ -35,8 +35,8 @@ class ReturnAssignment
             $people->getPhone(),
             $people->getEmail(),
             null,
-            $dateTimeNow->format('Y-m-d H:i:s'),
             null,
+            $dateTimeNow->format('Y-m-d H:i:s'),
             $observation,
             $product->getId()
         );
