@@ -23,16 +23,12 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY . /var/www
 
-# Cambiar la propiedad de todos los archivos al usuario www-data
-RUN chown -R www-data:www-data /var/www && chmod -R 755 /var/www
+RUN chown -R root:root /var/www && chmod -R 775 /var/www
 
-USER root
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Cambiar la propiedad nuevamente al usuario www-data para la ejecución
 RUN chown -R www-data:www-data /var/www
-
-USER www-data
 # Exponer el puerto 9000 para que Nginx pueda comunicarse con PHP-FPM
 EXPOSE 9000
 
