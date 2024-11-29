@@ -26,10 +26,13 @@ COPY . /var/www
 # Cambiar la propiedad de todos los archivos al usuario www-data
 RUN chown -R www-data:www-data /var/www && chmod -R 755 /var/www
 
+USER root
+RUN composer install --no-dev --optimize-autoloader --no-interaction
+
+# Cambiar la propiedad nuevamente al usuario www-data para la ejecución
+RUN chown -R www-data:www-data /var/www
+
 USER www-data
-
-RUN composer install --no-dev --optimize-autoloader
-
 # Exponer el puerto 9000 para que Nginx pueda comunicarse con PHP-FPM
 EXPOSE 9000
 
