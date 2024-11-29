@@ -16,12 +16,17 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install gd pdo pdo_mysql zip xml
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+COPY ./docker-compose/wait-for-it.sh /wait-for-it.sh
+RUN chmod +x /wait-for-it.sh
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Clear cache
 
 COPY . .
+
+RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache \
+    && chmod -R 775 /app/storage /app/bootstrap/cache
 
 RUN composer install --no-dev --optimize-autoloader --no-interaction || { echo "Composer install failed"; exit 1; }
 # Exponer el puerto 9000 para que Nginx pueda comunicarse con PHP-FPM
