@@ -4,7 +4,7 @@ FROM php:8.3.11-fpm
 WORKDIR /app
 
 # Instalar dependencias necesarias
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y wget \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
@@ -12,12 +12,11 @@ RUN apt-get update && apt-get install -y \
     unzip \
     curl \
     libxml2-dev \
+    wget https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh -O /usr/local/bin/wait-for-it.sh \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install gd pdo pdo_mysql zip xml
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-COPY ./docker-compose/wait-for-it.sh /wait-for-it.sh
-RUN chmod +x /wait-for-it.sh
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

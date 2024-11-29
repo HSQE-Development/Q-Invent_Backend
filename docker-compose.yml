@@ -3,9 +3,9 @@ services:
   laravel_api:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: laravel_api
-    working_dir: /app
+      dockerfile: Dockerfile 
+    restart: always
+    command: sh -c "/usr/local/bin/wait-for-it.sh 162.215.135.37:33080"
     volumes:
       - .:/app
       - ./docker-compose/php/local.ini:/usr/local/etc/php/conf.d/local.ini
