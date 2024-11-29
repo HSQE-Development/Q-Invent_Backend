@@ -5,9 +5,9 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: laravel_api
-    working_dir: /var/www
+    working_dir: /app
     volumes:
-      - .:/var/www
+      - .:/app
       - ./docker-compose/php/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
       - laravel_network
@@ -21,7 +21,7 @@ services:
     ports:
       - "9080:80"  # Exponer puerto 9080 en el host
     volumes:
-      - .:/var/www
+      - .:/app
       - ./docker-compose/nginx:/etc/nginx/conf.d/
     depends_on:
       - laravel_api

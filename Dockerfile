@@ -1,7 +1,7 @@
 # Usar PHP 8.3.11 como base
 FROM php:8.3.11-fpm
 
-WORKDIR /var/www
+WORKDIR /app
 
 # Instalar dependencias necesarias
 RUN apt-get update && apt-get install -y \
@@ -22,9 +22,9 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Clear cache
 
-COPY . /var/www
+COPY . .
 
-RUN chown -R root:root /var/www && chmod -R 775 /var/www
+RUN chown -R root:root /app && chmod -R 775 /app
 
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 # Exponer el puerto 9000 para que Nginx pueda comunicarse con PHP-FPM
