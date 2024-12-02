@@ -7,6 +7,7 @@ use App\Core\Domain\EnumProductStatus;
 
 interface ProductRepositoryInterface
 {
+    public function all(): array;
     /**
      * Obtiene todos los usuarios.
      * @param array $filters Los filtros a realizar

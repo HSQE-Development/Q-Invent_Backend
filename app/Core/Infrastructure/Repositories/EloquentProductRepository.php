@@ -9,13 +9,20 @@ use App\Core\Infrastructure\Helpers\PaginationMapping;
 use App\Core\Infrastructure\Helpers\ProductMapping;
 use App\Core\Infrastructure\Transformers\ProductTransformer;
 use App\Models\Product;
-use App\Models\Ubication;
 use DateTime;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 
 class EloquentProductRepository implements ProductRepositoryInterface
 {
+    public function all(): array
+    {
+        $products = Product::all();
+        $mappedProduct = collect($products)->map(function ($product) {
+            return ProductMapping::mapToEntity($product);
+        })->toArray();
+        return $mappedProduct;
+    }
     public function index($filters = [])
     {
         $page = $filters['page'] ?? 1; // Página actual
