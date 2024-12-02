@@ -209,15 +209,15 @@ class EloquentProductRepository implements ProductRepositoryInterface
         return Product::where("active", "I")->count("id");
     }
 
-    public function returnAssignment(int $productId, int $peopleId): ProductEntity
+    public function returnAssignment(int $productId, int $peopleId): array
     {
         $product = Product::findOrFail($productId);
         $existingAssignment = $product->assignmentPeople()->where('assignment_people.id', $peopleId)->first();
-
+        $assignQuantity = $existingAssignment->pivot->assigned_quantity;
         $product->quantity_available +=  $existingAssignment->pivot->assigned_quantity;
         $product->assignmentPeople()->detach($peopleId);
         $product->save();
-        return ProductMapping::mapToEntity($product);
+        return [ProductMapping::mapToEntity($product), $assignQuantity];
     }
 
     public function storeMassiveProducts(array $products): array

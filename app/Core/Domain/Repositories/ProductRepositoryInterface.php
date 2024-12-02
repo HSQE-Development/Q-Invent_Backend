@@ -90,7 +90,14 @@ interface ProductRepositoryInterface
     public function countTotalOfProducts(): int;
     public function countTotalActiveOfProducts(): int;
     public function countTotalInactiveOfProducts(): int;
-    public function returnAssignment(int $productId, int $peopleId): ProductEntity;
+
+    /**
+     * Devuelvo una tupla con el propductoEntity y la cantidad que se devolvio
+     * @param int $productId
+     * @param int $peopleId
+     * @return array
+     */
+    public function returnAssignment(int $productId, int $peopleId): array;
 
     public function storeMassiveProducts(array $products): array;
     public function updateMassiveProducts(array $products): array;
