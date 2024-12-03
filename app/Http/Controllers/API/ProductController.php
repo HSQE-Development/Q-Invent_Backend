@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Core\Application\UseCases\Product\AllProducts;
 use App\Core\Application\UseCases\Product\AssignmentProduct;
 use App\Core\Application\UseCases\Product\CountOfProductsByState;
 use App\Core\Application\UseCases\Product\CreateProduct;
@@ -14,10 +15,13 @@ use App\Core\Application\UseCases\Product\ReturnAssignment;
 use App\Core\Application\UseCases\Product\UpdateAvailableQuantity;
 use App\Core\Application\UseCases\Product\UpdateProduct;
 use App\Core\Application\UseCases\Product\VerifyDisponibility;
+use App\Exports\ExportProducts;
 use App\Http\Controllers\API\BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Excel as ExcelFormat;
 
 class ProductController extends BaseController
 {
@@ -33,6 +37,7 @@ class ProductController extends BaseController
     private CountOfProductsByState $countOfProductsByState;
     private ReturnAssignment $returnAssignment;
     private ImportProduct $importProduct;
+    private AllProducts $allProducts;
 
     public function __construct(
         FindAllProducts $findAllProducts,
@@ -46,7 +51,8 @@ class ProductController extends BaseController
         UpdateAvailableQuantity $updateAvailableQuantity,
         CountOfProductsByState $countOfProductsByState,
         ReturnAssignment $returnAssignment,
-        ImportProduct $importProduct
+        ImportProduct $importProduct,
+        AllProducts $allProducts
     ) {
         $this->findAllProducts = $findAllProducts;
         $this->findProductById = $findProductById;
@@ -60,8 +66,19 @@ class ProductController extends BaseController
         $this->countOfProductsByState = $countOfProductsByState;
         $this->returnAssignment = $returnAssignment;
         $this->importProduct = $importProduct;
+        $this->allProducts = $allProducts;
     }
 
+    public function allProducts(Request $request)
+    {
+        try {
+
+            $products = $this->allProducts->execute();
+            return $this->sendResponse(["products" => $products], "Lista de Productos.");
+        } catch (\Exception $e) {
+            return $this->sendError('Error inesperado', [$e->getMessage()], 500);
+        }
+    }
     public function index(Request $request)
     {
         try {
@@ -279,6 +296,20 @@ class ProductController extends BaseController
             return $this->sendError("Error al importar productos", $e->getMessage(), 500);
         } finally {
             unlink($tempFilePath);
+        }
+    }
+
+    public function exportProducts(Request $request)
+    {
+        try {
+            $excelFile = Excel::raw(new ExportProducts(), ExcelFormat::XLSX);
+            $base64Excel = base64_encode($excelFile);
+            return $this->sendResponse([
+                "file" => $base64Excel,
+                "file_name" => "Inventario.xlsx"
+            ], "Exporte exitoso.");
+        } catch (\Exception $e) {
+            return $this->sendError('Error inesperado', [$e->getMessage()], 500);
         }
     }
 }
