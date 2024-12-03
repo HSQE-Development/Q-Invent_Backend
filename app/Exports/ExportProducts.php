@@ -17,7 +17,7 @@ class ExportProducts implements WithEvents
                 $sheet = $event->sheet->getDelegate();
                 $spreadsheet = $event->sheet->getParent();
 
-                $templatePath = storage_path('app/Templates/EXPORT_TEMPLATE.xlsx');
+                $templatePath = resource_path('templates/EXPORT_TEMPLATE.xlsx');
 
                 if (!file_exists($templatePath)) {
                     throw new \Exception("La plantilla no se encuentra en la ruta especificada: $templatePath");
