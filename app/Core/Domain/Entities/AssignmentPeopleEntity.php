@@ -7,7 +7,7 @@ class AssignmentPeopleEntity
     private ?int $id;
     private string $name;
     private string $email;
-    private string $phone;
+    private ?string $phone;
     private ?int $assigned_quantity;
     private ?string $assign_date;
     private ?string $devolution_date;
