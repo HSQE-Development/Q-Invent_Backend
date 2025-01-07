@@ -9,7 +9,7 @@ class AssignmentPeopleDTO
     public ?int $id;
     public string $name;
     public string $email;
-    public string $phone;
+    public ?string $phone;
     public ?int $assigned_quantity;
     public ?string $assign_date;
     public ?string $devolution_date;
