@@ -60,7 +60,7 @@ class ImportProduct
                     if (!$existingUbication) {
                         throw new \Exception("Ubicación no encontrada: {$product['ubication']}");
                     }
-                    $existingProduct = $this->productRepositoryInterface->getByName($product["name"]);
+                    $existingProduct = $this->productRepositoryInterface->getByName(trim($product["name"]));
 
                     $productEntity = new ProductEntity(
                         id: $existingProduct?->getId(),
