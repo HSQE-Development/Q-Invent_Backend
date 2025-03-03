@@ -30,12 +30,19 @@ class EloquentProductRepository implements ProductRepositoryInterface
 
         $productName = $filters['productName'] ?? null;
         $productStatus = $filters["productStatus"] ?? null;
+        $peopleId = $filters["peopleId"] ?? null;
 
         $query = Product::query();
 
         //FITLROS
         if ($productName) {
             $query->where('name', 'LIKE', "%$productName%");
+        }
+
+        if ($peopleId && $peopleId !== "null") {
+            $query->whereHas("assignmentPeople", function ($query) use ($peopleId) {
+                $query->where('assignment_person_id', $peopleId);
+            });
         }
 
         if ($productStatus) {

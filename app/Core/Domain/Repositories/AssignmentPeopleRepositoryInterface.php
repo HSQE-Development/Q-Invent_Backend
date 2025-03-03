@@ -14,6 +14,13 @@ interface AssignmentPeopleRepositoryInterface
     public function index(array $filters = []);
 
     /**
+     * Obtiene todos los elementos con paginación
+     * @param array $filters
+     * @return array
+     */
+    public function allPaginate(array $filters = []): array;
+
+    /**
      * Obtiene un elemento por su ID.
      *
      * @param int $id

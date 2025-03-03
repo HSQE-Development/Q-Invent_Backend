@@ -5,6 +5,8 @@ namespace App\Core\Infrastructure\Repositories;
 use App\Core\Domain\Entities\AssignmentPeopleEntity;
 use App\Core\Domain\Repositories\AssignmentPeopleRepositoryInterface;
 use App\Core\Infrastructure\Helpers\AssignmentPeopleMapping;
+use App\Core\Infrastructure\Helpers\PaginationMapping;
+use App\Core\Infrastructure\Transformers\AssignmentPeopleTransformer;
 use App\Models\AssignmentPeople;
 
 class EloquentAssignmentPeopleRepository implements AssignmentPeopleRepositoryInterface
@@ -15,6 +17,29 @@ class EloquentAssignmentPeopleRepository implements AssignmentPeopleRepositoryIn
         return collect($assignmentPeople)->map(function ($eloquentPeople) {
             return AssignmentPeopleMapping::mapToEntity($eloquentPeople);
         })->toArray();
+    }
+
+    public function allPaginate($filters = []): array
+    {
+        $page = $filters['page'] ?? 1; // Página actual
+        $perPage =  $filters['per_page'] ?? 50;
+
+        $peopleName = $filters['peopleName'] ?? null;
+
+        $query = AssignmentPeople::query();
+
+        if ($peopleName) {
+            $query->where("name", "LIKE", "%$peopleName%");
+        }
+
+        $eloquentPeoples = $query->with("products")->paginate($perPage, ["*"], "page", $page);
+        $mappedPeoples = $eloquentPeoples->items();
+
+        $mappedPeoples = collect($mappedPeoples)->map(function ($eloquentPeople) {
+            return AssignmentPeopleMapping::mapToEntity($eloquentPeople);
+        })->toArray();
+
+        return PaginationMapping::mapToEntity(AssignmentPeopleTransformer::toDTOs($mappedPeoples), $eloquentPeoples)->toArray();
     }
     public function getById($id): ?AssignmentPeopleEntity
     {
