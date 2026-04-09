@@ -3,7 +3,7 @@ services:
   laravel_api:
     build:
       context: .
-      dockerfile: Dockerfile 
+      dockerfile: Dockerfile
     restart: always
     command: sh -c "/usr/local/bin/wait-for-it.sh 162.215.135.37:33080 && php artisan migrate --force && php-fpm"
     volumes:
@@ -13,6 +13,8 @@ services:
       - laravel_network
     expose:
       - 9000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   # Servicio Nginx
   nginx:
