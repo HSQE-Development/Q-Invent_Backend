@@ -14,7 +14,7 @@ services:
     expose:
       - 9000
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - "host.docker.internal:172.17.0.1"
 
   # Servicio Nginx
   nginx:
@@ -34,3 +34,6 @@ services:
 networks:
   laravel_network:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.23.0.0/24
