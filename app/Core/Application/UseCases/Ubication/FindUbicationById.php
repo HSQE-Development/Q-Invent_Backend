@@ -2,6 +2,7 @@
 
 namespace App\Core\Application\UseCases\Ubication;
 
+use App\DTO\UbicationDTO;
 use App\Core\Domain\Repositories\UbicationRepositoryInterface;
 use App\Core\Infrastructure\Transformers\UbicationTransformer;
 
@@ -14,9 +15,15 @@ class FindUbicationById
         $this->ubicationRepositoryInterface = $ubicationRepositoryInterface;
     }
 
-    public function execute(int $id)
+    // Devuelve un DTO de Ubicación si se encuentra, o null si no se encuentra
+    public function execute(int $id): ?UbicationDTO
     {
-        $product = $this->ubicationRepositoryInterface->getById($id);
-        return UbicationTransformer::toDTO($product);
+        $ubication = $this->ubicationRepositoryInterface->getById($id);
+
+        if (!$ubication) {
+            return null;
+        }
+
+        return UbicationTransformer::toDTO($ubication);
     }
 }

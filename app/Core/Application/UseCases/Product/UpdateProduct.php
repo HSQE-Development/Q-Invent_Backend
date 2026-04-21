@@ -7,7 +7,6 @@ use App\Core\Domain\Entities\ProductEntity;
 use App\Core\Domain\Repositories\ProductRepositoryInterface;
 use App\Core\Infrastructure\Helpers\UbicationMapping;
 use App\Core\Infrastructure\Transformers\ProductTransformer;
-use App\Core\Infrastructure\Transformers\UbicationTransformer;
 
 class UpdateProduct
 {
@@ -28,19 +27,24 @@ class UpdateProduct
         ?string $observation,
         ?string $active,
     ) {
-
-        $existingUbication = null;
-        if ($ubicationId)
-            $existingUbication = $this->findUbicationById->execute($ubicationId);
-
-        if (!$existingUbication) {
-            throw new \Exception("No se encontro la ubicación", 404);
-        }
-
+        // verificar si el producto existe, si no existe lanzar una excepción
         $existingProduct = $this->productRepositoryInterface->getById($id);
 
         if (!$existingProduct) {
-            throw new \Exception("Cliente no encontrado", 404);
+            throw new \Exception("Producto no encontrado", 404);
+        }
+
+        $ubication = $existingProduct->getUbication();
+
+        // Si se proporciona una nueva ubicación, verificar si existe y asignarla al producto
+        if ($ubicationId !== null) {
+            $existingUbication = $this->findUbicationById->execute($ubicationId);
+
+            if (!$existingUbication) {
+                throw new \Exception("No se encontro la ubicación", 404);
+            }
+
+            $ubication = UbicationMapping::dtoToEntity($existingUbication);
         }
 
         $productEntity = new ProductEntity(
@@ -48,7 +52,7 @@ class UpdateProduct
             name: $name ?? $existingProduct->getName(),
             total_quantity: $total_quantity ?? $existingProduct->getTotal_quantity(),
             quantity_type: $quantity_type ?? $existingProduct->getQuantityType(),
-            ubication: UbicationMapping::dtoToEntity($existingUbication) ?? $existingProduct->getUbication(),
+            ubication: $ubication,
             observation: $observation  ?? $existingProduct->getObservation(),
             active: $active  ?? $existingProduct->isActive(),
             assignmentPeople: $existingProduct->getAssignmentPeople(),

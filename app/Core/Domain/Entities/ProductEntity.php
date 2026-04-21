@@ -26,7 +26,7 @@ class ProductEntity
         ?string $observation,
         string $active,
         array $assignmentPeople = [],
-        ?int $quantity_available,
+        ?int $quantity_available = null,
         array $productHistories = []
     ) {
         $this->id = $id;
