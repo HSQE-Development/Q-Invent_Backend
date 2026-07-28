@@ -20,6 +20,7 @@ services:
   nginx:
     image: nginx:latest
     container_name: laravel-nginx
+    restart: always
     ports:
       - "9080:80"  # Exponer puerto 9080 en el host
     volumes:
