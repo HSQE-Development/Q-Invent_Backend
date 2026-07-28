@@ -105,7 +105,7 @@ class ProductController extends BaseController
                 'total_quantity' => 'required|int',
                 'quantity_type' => 'required|string',
                 'ubication' => 'required|int',
-                'observation' => 'string|max:255',
+                'observation' => 'nullable|string|max:255',
             ]);
 
             $product = $this->createProduct->execute(
@@ -113,7 +113,7 @@ class ProductController extends BaseController
                 $validated['total_quantity'],
                 $validated['quantity_type'],
                 $validated['ubication'],
-                $validated['observation'],
+                $validated['observation'] ?? null,
             );
             return $this->sendResponse(["product" => $product], "Producto creado correctamente.", 201);
         } catch (ValidationException $e) {
@@ -132,7 +132,7 @@ class ProductController extends BaseController
                 'total_quantity' => 'int',
                 'quantity_type' => 'string',
                 'ubication' => 'int',
-                'observation' => 'string|max:255',
+                'observation' => 'nullable|string|max:255',
                 'active' => 'string|max:2',
             ]);
 
@@ -265,6 +265,8 @@ class ProductController extends BaseController
                 ['product' => $product],
                 'Devolucion Completa.'
             );
+        } catch (ValidationException $e) {
+            return $this->sendError('Errores de validación', $e->validator->errors()->all(), 422);
         } catch (\Exception $e) {
             return $this->sendError('Error inesperado', [$e->getMessage()], 500);
         }

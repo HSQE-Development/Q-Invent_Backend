@@ -32,7 +32,7 @@ class CreateProduct
         int $total_quantity,
         string $quantity_type,
         int $ubicationId,
-        string $observation,
+        ?string $observation,
         string $active = "A"
     ) {
 
